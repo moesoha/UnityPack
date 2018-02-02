@@ -185,8 +185,15 @@ class Texture2D(Texture):
 
 		if not data and size == (0, 0):
 			return None
+			
+		img=Image.frombytes(mode, size, data, codec, args)
 
-		return Image.frombytes(mode, size, data, codec, args)
+		# RGBA4444's channel is ABGR, needs to be swap
+		if self.format == TextureFormat.RGBA4444:
+			a, b, g, r = img.split()
+			img = Image.merge("RGBA", (r, g, b, a))
+
+		return img
 
 
 class StreamingInfo(Object):
